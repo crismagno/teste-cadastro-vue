@@ -42,9 +42,9 @@
 
 <script>
 
-import axios from "axios";
+import axios from "axios"
 
-const URL = 'http://localhost:3005/api'
+const URL = 'http://localhost:3005'
 
 export default {
     name: 'login',
@@ -56,23 +56,24 @@ export default {
     },
     methods: {
         signIn(){
-            axios.get(`${URL}/users`)
+            axios.post(`${URL}/auth`, this.user)
                 .then(resp => {
-                    resp.data.forEach(elem => {
-                        if (this.user.email === elem.email && this.user.password === elem.password ) {
-                            this.$router.push({ path: '/home'})
-                        }
-                    });
+                        localStorage.setItem('userKey', JSON.stringify(resp.data))
+                        this.$router.push({path: '/home'})
+                    
                 })
-            
+                .catch(e => alert(e.response.data))
         },
 
         signUp(){
-            axios.post( `${URL}/users`, this.user )
-                .then(resp => alert('post concluido com sucesso'))
-                .catch(e => alert(e))
-            this.user = {}
-            this.showSignUp = false
+            axios.post( `${URL}/signup`, this.user )
+                .then(resp => {
+                    alert(resp.data)
+                    this.showSignUp = false
+                    this.user = {}
+                })
+                .catch(e => alert(e.response.data))
+            
         },
 
         clear(){

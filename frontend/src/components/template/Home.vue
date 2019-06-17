@@ -90,6 +90,7 @@ export default {
         },
 
         sair(){
+            localStorage.removeItem('userKey')
             this.$router.push({path: '/'})
         }
     },
