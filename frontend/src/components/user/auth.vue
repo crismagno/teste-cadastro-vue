@@ -5,19 +5,19 @@
             <!-- <hr> -->
             <div class="form-group">
                 <input class="form-control" v-if="showSignUp" v-model="user.name"
-                    type="text" placeholder="Digite seu Nome" />
+                    type="text" name="nome" placeholder="Digite seu Nome" />
             </div>
             <div class="form-group">
                 <input class="form-control" v-model="user.email"
-                    type="email" placeholder="Digite seu E-mail" />
+                    type="email" name="email" placeholder="Digite seu E-mail" />
             </div>
             <div class="form-group">
                 <input class="form-control" v-model="user.password"
-                    type="password" placeholder="Digite sua senha" />
+                    type="password" name="password" placeholder="Digite sua senha" />
             </div>
             <div class="form-group">
                 <input class="form-control" v-model="user.confirmPassword" v-if="showSignUp"
-                    type="password" placeholder="Confirme sua senha" />
+                    type="password" name="confirmPassword" placeholder="Confirme sua senha" />
             </div>
 
             <div class="btn-group">
@@ -43,8 +43,11 @@
 <script>
 
 import axios from "axios"
+import { mapState } from "vuex";
 
 const URL = 'http://localhost:3005'
+import { showError, baseApiURL, userKey } from "../../config/global";
+
 
 export default {
     name: 'login',
@@ -54,31 +57,42 @@ export default {
             user: {},
         }
     },
+    computed: mapState(["visible"]),
     methods: {
+
         signIn(){
-            axios.post(`${URL}/auth`, this.user)
+            axios.post(`${baseApiURL}/signin`, this.user)
                 .then(resp => {
-                        localStorage.setItem('userKey', JSON.stringify(resp.data))
-                        this.$router.push({path: '/home'})
+                    this.$store.commit('setUser', resp.data)
+                    localStorage.setItem(userKey, JSON.stringify(resp.data))
+                    this.$router.push({path: '/dashboard'})
+                    this.$store.commit('show', true)
                     
                 })
-                .catch(e => alert(e.response.data))
+                .catch(e => showError(e.response.data)) 
         },
 
         signUp(){
-            axios.post( `${URL}/signup`, this.user )
+            axios.post( `${baseApiURL}/signup`, this.user )
                 .then(resp => {
-                    alert(resp.data)
+                    this.$toasted.global.defaultSuccess(resp.data)
                     this.showSignUp = false
                     this.user = {}
                 })
-                .catch(e => alert(e.response.data))
+                .catch(e => showError(e.response.data))
             
         },
 
         clear(){
             this.user = {}
-        }
+        },
+        
+        
+    }, 
+    created(){
+        localStorage.removeItem(userKey)
+        this.$store.commit('setUser', null)
+        this.$store.commit('show', false)
     }
 }
 </script>
@@ -86,7 +100,6 @@ export default {
 <style>
 
     .auth-content{
-        margin-top: 100px;
         /* width: 500px; */
         height: 100%;
         display: flex;
@@ -128,7 +141,7 @@ export default {
     }
 
     .btn-cadlog > a {
-        color: rgba(0, 0, 0,.6);
+        color: rgba(0, 0, 0,.5);
         font-size: 17px;
         font-weight: bold;
         text-decoration: none;
