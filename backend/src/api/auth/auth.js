@@ -1,8 +1,16 @@
 const { authSecret } = require('../../../.env')
+const { existsError, notExistsOrError, equalsOrError } = require('./validations')
 const jwt = require('jwt-simple')
 const bcrypt = require('bcrypt')
 const User = require('../user/user')
 
+//método para encriptar a senha
+const encryptPassword = password => {
+    const salt = bcrypt.genSaltSync(10)
+    return bcrypt.hashSync(password, salt)
+}
+
+//método de login
 const signIn = async (req, res) => {
 
     const { email, password } = req.body
@@ -12,16 +20,11 @@ const signIn = async (req, res) => {
     } 
     
     const user = await User.findOne({ email })
-    // console.log(user.email)
 
-    if (!user) return res.status(400).send('Usuário não encontrado!')
+    if (!user) return res.status(404).send('Usuário não encontrado!')
 
     const isMatch = bcrypt.compareSync(password, user.password)
-    if (!isMatch) return res.status(401).send('Email/Senha inválidos!') 
-    
-    // if (!(password === user.password)) {
-    //     return res.status(401).send('Email/Senha inválidos!') 
-    // } 
+    if (!isMatch) return res.status(400).send('Email/Senha inválidos!') 
 
     const now = Math.floor(Date.now() / 1000)
 
@@ -30,7 +33,7 @@ const signIn = async (req, res) => {
         name: user.name,
         email: user.email,
         iat: now,
-        exp: now + (60 * 60 * 24 * 3)
+        exp: now + (60 * 60 * 24 * 1)
     }
 
     res.json({
@@ -39,6 +42,40 @@ const signIn = async (req, res) => {
     })
 }
 
+//método de resgistrar
+const signUp = async (req, res) => {
+    const user = { ...req.body }
+    // if (req.params.id) user.id = req.params.id
+
+    try {
+        existsError(user.name, 'Nome não informado!')
+        existsError(user.email, 'E-mail não informado!')
+        existsError(user.password, 'Senha não informada!')
+        existsError(user.confirmPassword, 'Confirmação de Senha inválida!')
+        equalsOrError(user.password, user.confirmPassword,
+            'Senhas não conferem!')
+
+        const userFromDB = await User.findOne({email: user.email})
+        if (!user.id) {
+            notExistsOrError(userFromDB, 'Usuário já cadastrado!')
+        }
+    } catch (msg) {
+        return res.status(400).send(msg)
+    }
+
+    user.password = encryptPassword(user.password)
+    delete user.confirmPassword
+
+    const newUser = await User.create(user, err => {
+        if (err) {
+            return res.send(err)
+        } else{
+            res.status(200).send('Usuário inserido com sucesso!!!')
+        }
+    })
+}
+
+//método para validar token
 const validateToken = async (req, res) => {
     const userData = req.body || null
     try {
@@ -55,4 +92,15 @@ const validateToken = async (req, res) => {
     res.send(false)
 }
 
-module.exports = { signIn, validateToken }
+
+module.exports = { signIn, signUp, validateToken }
+    
+
+
+
+    // const validateToken = (req, res, next) => {
+    //     const token = req.body.token || ''
+    //     jwt.verify(token, authSecret, function (err, decoded) {
+    //         return res.status(200).send({ valid: !err })
+    //     })
+    // }

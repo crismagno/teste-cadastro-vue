@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, min: 6, max: 12, required: true },
-    confirmPassword: { type: String, min: 6, max: 12, required: false }
+    createdAt: { type: Date, default: Date.now }
 })
 
 module.exports = restful.model('User', userSchema)
