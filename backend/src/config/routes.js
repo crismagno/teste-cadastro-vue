@@ -3,6 +3,20 @@ const { signIn, signUp, validateToken } = require('../api/auth/auth')
 // const { authenticate } = require('./passport')
 const verifyToken = require('./verifyToken')
 
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+    destination: function(req, file, callback){
+        callback(null, './upload')
+    },
+
+    filename: function(req, file, callback){
+        callback(null, `${Date.now()}_IMG`)
+    }
+})
+
+const upload = multer({ storage }).single('arquivo')
+
 module.exports = function(app) {
 
     /*
@@ -18,9 +32,9 @@ module.exports = function(app) {
 
     const productService = require('../api/product/productService')
     productService.register(routerProtected, '/products')
-
-
-
+    
+    const statusVendaService = require('../api/status_venda/statusVendaService')
+    statusVendaService.register(routerProtected, '/status-venda')
 
 
     /*

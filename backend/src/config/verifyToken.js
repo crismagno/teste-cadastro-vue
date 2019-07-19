@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     if (req.method === 'OPTIONS') {
         next()
     } else {
-        const authHeader = req.headers.authorization
+        const authHeader = req.headers.authorization || req.body.token
         if (!authHeader) {
             return res.status(401).send('No token provided.')
         }
