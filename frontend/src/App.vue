@@ -1,7 +1,7 @@
 <template>
-  <div class="app" :class="{'hide-all' : !visible}" >
+  <div class="app" :class="{'hide-all' : !visible, 'hide-menu': !menuVisible}" >
     <Header title="iPet" :visivel="visible" /><!--Cabeçalho-->
-    <Menu :visivel="visible" />
+    <Menu :visivel="visible && menuVisible" />
     <Content />
     <Footer :visivel="visible" />
   </div>
@@ -17,7 +17,7 @@ import { mapState } from "vuex";
 
 export default {
   components: { Header, Menu, Footer, Content },
-  computed: mapState(['visible'])
+  computed: mapState(['visible', 'menuVisible'])
 }
 </script>
 
@@ -31,7 +31,7 @@ body{
   height: 100vh;;
   display: grid;
   grid-template-columns: 230px 1fr;
-  grid-template-rows: 60px 1fr 40px;
+  grid-template-rows: 45px 1fr 40px;
   grid-template-areas: 
               'header header'
               'menu content'
@@ -49,12 +49,23 @@ body{
               
 }
 
-@media screen and (max-width: 650px) {
+.hide-menu {
+  height: 100vh;;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 45px 1fr 40px;
+  grid-template-areas: 
+              ' header'
+              ' content'
+              ' footer';
+}
+
+@media screen and (max-width: 766px) {
   .app {
     height: 100vh;;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 60px 40px 1fr 40px;
+    grid-template-rows: 45px 40px 1fr 40px;
     grid-template-areas: 
                 'header '
                 'menu '

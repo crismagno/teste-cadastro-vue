@@ -8,16 +8,17 @@ export default new Vuex.Store({
     state: {
         user: null,
         visible: true,
-        tab: ''
+        tab: '',
+        menuVisible: true
     },
 
     mutations: {
         setUser(state, user){
             state.user = user
             if (user) {
-                axios.defaults.headers.common.Authorization = `Bearer ${user.token}`
+                axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`
             } else {
-                delete axios.defaults.headers.Authorization
+                delete axios.defaults.headers.common['Authorization']
             }
         },
 
@@ -27,6 +28,12 @@ export default new Vuex.Store({
 
         tabSelected(state, newTab){
             state.tab = newTab
+            
+        },
+
+        showMenu(state, menuVisible){
+            state.menuVisible = menuVisible
         }
+
     }
 })

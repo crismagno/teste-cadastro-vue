@@ -17,7 +17,7 @@
               <i class="fa fa-search"></i>
             </button>
             <button style="margin-left: 5px;" class="btn btn-dark" @click="clear">
-              <i class="fa fa-trash-o"></i>
+              <i class="fa fa-close"></i>
             </button>
           </div>
 
@@ -26,16 +26,15 @@
         <div class="div-update col-xs-12" v-if="visibleUpdate">
           
           <hr>
-          <div class="form-group col-md-4">
-          
+          <div class="form-group col-xs-5">
             Nome
             <input type="text" class="form-control" v-model="userUpdate.name">
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-xs-5">
             Email
             <input type="text" class="form-control" v-model="userUpdate.email">
           </div>
-          <div class="form-group col-xs-12 col-md-4">
+          <div class="form-group col-xs-2" >
             <br>
             <input type="button" class="btn btn-success" value="atualizar" @click="update">
           </div>
@@ -85,7 +84,7 @@ export default {
         return {
         nome: '',
         users: [],
-        userUpdate: {},
+        userUpdate: null,
         visibleUpdate: false
         };
     },
@@ -94,58 +93,59 @@ export default {
     methods: {
 
         clear(){
-        this.nome = ''
-        this.getUsers()
+          this.nome = ''
+          this.getUsers()
         },
 
         async getUsers() {
-        const search = this.nome ? `&name__regex=/${this.nome}/` : '' 
-            await axios
-            .get(`${baseApiURL}/api/users?sort=-createdAt${search}`)
-            .then(res => {
-                this.users = res.data
-                
-                })
-            .catch(e => {
-                // showError(e.response.data)
-                this.getUsers()
-                });
+          const search = this.nome ? `&name__regex=/${this.nome}/` : '' 
+              await axios
+                .get(`${baseApiURL}/api/users?sort=-createdAt${search}`)
+                .then(res => {
+                  this.users = res.data
+                  
+                  })
+                .catch(e => {
+                  showError(e.response.data)
+                  // this.getUsers()
+                  });
 
         },
 
         deletar(id) {
           axios
-          .delete(`${baseApiURL}/api/users/${id}`)
-            .then(resp => this.getUsers());
-          this.userUpdate = {};
-          this.visibleUpdate = false;
+            .delete(`${baseApiURL}/api/users/${id}`)
+              .then(resp => this.getUsers());
+            this.userUpdate = {};
+            this.visibleUpdate = false;
         },
 
         selectUpdate(user) {
-        this.userUpdate = { ...user };
-        this.visibleUpdate = true;
+          this.userUpdate = { ...user };
+          this.visibleUpdate = true;
         },
 
         update() {
-        axios
+          axios
             .put(`${baseApiURL}/api/users/${this.userUpdate._id}`, this.userUpdate)
             .then(resp => {
             this.getUsers();
             this.userUpdate = {};
             this.visibleUpdate = false;
-            });
+              });
         },
 
         sair() {
-        this.$store.commit("setUser", null);
-        localStorage.removeItem(userKey);
-        this.$router.push({ path: "/" });
+          this.$store.commit("setUser", null);
+          localStorage.removeItem(userKey);
+          this.$router.push({ path: "/" });
         }
     },
 
     created() {
-        // this.validateToken();
+        this.$store.commit('setUser', JSON.parse(localStorage.getItem(userKey)))
         this.getUsers();    
+        document.title = 'Usuários'
     }
 }
 </script>

@@ -44,8 +44,6 @@
 
 import axios from "axios"
 import { mapState } from "vuex";
-
-const URL = 'http://localhost:3005'
 import { showError, baseApiURL, userKey } from "../../config/global";
 
 
@@ -80,7 +78,6 @@ export default {
                     this.user = {}
                 })
                 .catch(e => showError(e.response.data))
-            
         },
 
         clear(){

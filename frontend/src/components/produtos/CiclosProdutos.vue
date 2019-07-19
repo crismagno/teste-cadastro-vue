@@ -6,16 +6,16 @@
 
         <ul class="nav nav-tabs">
             <li :class="{'active' : tab === 'list'}"><a data-toggle="tab" 
-                href="javascript:" @click="changeTab('list')">List </a></li>
+                href="javascript:" @click="changeTab('list')">Lista Produtos </a></li>
 
             <li :class="{'active' : tab === 'create'}"><a data-toggle="tab" 
-                href="javascript:" @click="changeTab('create')">Create </a></li>
+                href="javascript:" @click="changeTab('create')">Postar Produto </a></li>
 
-            <li :class="{'active' : tab === 'update'}"><a data-toggle="tab" 
+            <!-- <li :class="{'active' : tab === 'update'}"><a data-toggle="tab" 
                 href="javascript:" @click="changeTab('update')">Update</a></li>
             
             <li :class="{'active' : tab === 'deletar'}"><a data-toggle="tab" 
-                href="javascript:" @click="changeTab('deletar')">Delete</a></li>
+                href="javascript:" @click="changeTab('deletar')">Delete</a></li> -->
         </ul>
 
         <div class="tab-content">
@@ -27,14 +27,14 @@
                 <h3>Cadastre seu produto</h3>
                 <CreateProduct />
             </div>
-            <div id="update" class="tab-pane fade in" :class="{'active' : tab === 'update'}">
-                <h3>Menu 3</h3>
-                <p>Some content in menu 3.</p>
+            <!-- <div id="update" class="tab-pane fade in" :class="{'active' : tab === 'update'}">
+                <h3>Atualizar Produto</h3>
+                <UpdateProduct />
             </div>
             <div id="deletar" class="tab-pane fade in" :class="{'active' : tab === 'deletar'}">
-                <h3>Menu 4</h3>
-                <p>Some content in menu 4.</p>
-            </div>
+                <h3>Deletar Produto</h3>
+                <DeleteProduct />
+            </div> -->
         </div>
     </div>
 </template>
@@ -42,26 +42,25 @@
 <script>
 import { mapState } from "vuex";
 import Pagetitle from "../template/Pagetitle";
-import CreateProduct from "./createProduct";
+import CreateProduct from "./CreateProduct";
 import ListProduct from "./ListProduct";
+import UpdateProduct from "./UpdateProduct";
+import DeleteProduct from "./DeleteProduct";
 
 export default {
-    components: { Pagetitle, CreateProduct, ListProduct },
-    data: function(){
-        return {
-    
-        }
-    },
+    components: { Pagetitle, CreateProduct, ListProduct, UpdateProduct, DeleteProduct },
 
     computed: mapState(['tab']),
+
     methods: {
         changeTab(menu){
-            this.$store.commit('tabSelected', menu)   
+            this.$store.commit('tabSelected', menu)  
         }
     },
 
     mounted(){
         this.$store.commit('tabSelected', 'list')
+        document.title = 'Ciclos de Produtos'
     }
 }
 </script>
