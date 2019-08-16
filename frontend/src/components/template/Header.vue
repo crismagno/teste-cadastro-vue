@@ -1,34 +1,61 @@
 <template>
     <header class="header" v-if="visivel"> 
         <div class="brand">
-            <a href @click.prevent="hideMenu">
+            <a href @click.prevent="hideMenu()">
                 <!-- iPet -->
                 <i class="fa fa-bars"></i>
             </a>
 
+            <router-link to="/anotacao" class="sino" v-if="sinoAlerta" >
+                <img src="https://3.bp.blogspot.com/-L-2pZJfZceY/VzUSHQMU-tI/AAAAAAAAUlg/B2lXYsXhPskIBCZLTb5z0lSlLgjg2LKowCLcB/s1600/Gifs%2Banimados%2BSino%2B2.gif" />
+                <span style="font-size: 15px;">Anotações do dia</span>
+                
+            </router-link>
+            <!-- <button @click="tocar()">click</button> -->
         </div>
 
         <span class=" header-email">iPet</span>
 
-        <a href="javascript:;" class="btn-logout" @click="sair()">
+        <a href class="btn-logout" @click.prevent="sair()">
             Sair <i class="fa fa-sign-out"></i>
         </a>
+
     </header>
 </template>
 
 <script>
+import axios from "axios";
 import { mapState } from "vuex";
 import { showError, userKey, baseApiURL } from "../../config/global";
 
+
+// var myTrack = new Audio('./musica.mp3')
 export default {
     props: {
         title: String,
         visivel: Boolean
     },
 
-    computed: mapState(['menuVisible']),
+    data: function(){
+        return {
+            tocarAlerta: false
+        }
+    },
+
+    computed: mapState(['menuVisible', 'sinoAlerta']),
 
     methods: {
+        // tocar() {
+        //     if (this.tocarAlerta === false) {
+        //         myTrack.play()
+        //         this.tocarAlerta = true
+        //     } else {
+        //         myTrack.pause()
+        //         // myTrack.currentTime = 3
+        //         this.tocarAlerta = false
+        //     }
+        // },
+
         hideMenu(){
             const hide = this.menuVisible ? false : true
             this.$store.commit("showMenu", hide);
@@ -39,7 +66,10 @@ export default {
             localStorage.removeItem(userKey);
             this.$router.push({ path: "/" });
         },
-    }
+
+        
+    },
+
 }
 </script>
 
@@ -122,6 +152,17 @@ export default {
         font-size: 18px;
         color: #fff;
         text-decoration: none;
+    }
+
+    .sino {
+        /* position: absolute; */
+        margin-left: 20px;
+        
+    }
+
+    .sino > img {
+        width: 70px;
+        height: 40px;
     }
 
 </style>

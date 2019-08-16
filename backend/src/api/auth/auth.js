@@ -32,6 +32,7 @@ const signIn = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        // password: user.password, 
         iat: now,
         exp: now + (60 * 60 * 24 * 1)
     }
@@ -70,7 +71,7 @@ const signUp = async (req, res) => {
         if (err) {
             return res.send(err)
         } else{
-            res.status(200).send('Usuário inserido com sucesso!!!')
+            res.status(200).send(`Usuário ${req.body.name} inserido com sucesso!!!`)
         }
     })
 }

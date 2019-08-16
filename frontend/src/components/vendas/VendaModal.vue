@@ -16,13 +16,19 @@
                     <h4 >Código: </h4><strong>{{produto.cod}}</strong>
                     <br>
                     <h4 >Preço: </h4><strong ><span >R$ {{(produto.preco === undefined ? 0 : produto.preco).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, '$1.')}}</span></strong>
+                    <span style="color: red" v-if="produto.desconto"> - {{produto.desconto}}%</span>
                     <br>
                     <h4>Quantidade que tem: </h4><strong>{{produto.quantity - quantidade}}</strong>
                     <br>
                     
-                    <h4>Quantidade a vender: </h4>
-                    <input style="display: inline-block;" v-model="quantidade"
-                        class="" type="number" min="0" :max="produto.quantity">
+                    <div class="">
+                        <h4>Quantidade a vender: </h4>
+                        <input v-model="quantidade" style="width: 90px; display: inline-block"
+                            class="form-control" type="number" min="0" :max="produto.quantity">
+                    </div>
+                    <h4>Descrição da venda:</h4>
+                    <textarea class="form-control" v-model="description_venda" style="width: 47.5%;"
+                         cols="5" rows="4" maxlength="200" placeholder="Dê uma descrição da venda..."></textarea>
 
                     <div class="calculo">
                         <span>Calculo</span>
@@ -32,9 +38,10 @@
                         <span >x  {{quantidade}}</span>
                         <hr class="hr-modal">
                         <div class="resultado" :style="quantidade > 0 ? 'color: green' : 'color: red'">
-                            R$: {{(produto.preco * quantidade).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, '$1.')}}
+                            R$: {{((produto.preco - (produto.preco * this.produto.desconto / 100)) * quantidade).toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, '$1.')}}
                         </div>
                     </div>
+                    
                 </div>
 
                 <div class="modal-footer">
@@ -61,7 +68,8 @@ export default {
     data: function(){
         return {
             quantidade: 0,
-            statusVenda: {}
+            statusVenda: {},
+            description_venda: '' 
         }
     },
 
@@ -79,16 +87,17 @@ export default {
                 this.statusVenda = {
                     name: this.produto.name,
                     preco: this.produto.preco,
+                    desconto: this.produto.desconto,
                     cod: this.produto.cod,
-                    quantity: this.quantidade,  
-                    valorVenda: this.produto.preco * this.quantidade
+                    quantity: this.quantidade,
+                    valorVenda: (this.produto.preco - (this.produto.preco * this.produto.desconto / 100)) * this.quantidade,
+                    description: this.description_venda
                 }
                 
                 axios.post(`${baseApiURL}/api/status-venda`, this.statusVenda)
-                // console.log(this.statusVenda)
                     
             } else {
-                this.$toasted.global.defaultError({msg: 'Nenhuma venda concluida.'})
+                this.$toasted.global.defaultError({msg: 'Não foi possivel concluir a venda.'})
             }
         }
     },
@@ -117,7 +126,8 @@ export default {
     }
 
     .calculo span {
-        font-size: 15px; font-weight: bold;
+        font-size: 15px; 
+        font-weight: bold;
     }
 
     hr.hr-modal{ 

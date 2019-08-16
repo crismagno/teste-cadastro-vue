@@ -1,21 +1,6 @@
 const express = require('express')
 const { signIn, signUp, validateToken } = require('../api/auth/auth')
-// const { authenticate } = require('./passport')
 const verifyToken = require('./verifyToken')
-
-const multer = require('multer')
-
-const storage = multer.diskStorage({
-    destination: function(req, file, callback){
-        callback(null, './upload')
-    },
-
-    filename: function(req, file, callback){
-        callback(null, `${Date.now()}_IMG`)
-    }
-})
-
-const upload = multer({ storage }).single('arquivo')
 
 module.exports = function(app) {
 
@@ -36,6 +21,9 @@ module.exports = function(app) {
     const statusVendaService = require('../api/status_venda/statusVendaService')
     statusVendaService.register(routerProtected, '/status-venda')
 
+    const anotacaoService = require('../api/anotacao/anotacaoService')
+    anotacaoService.register(routerProtected, '/anotacao')
+
 
     /*
     *rotas que serão abertas
@@ -44,3 +32,19 @@ module.exports = function(app) {
    app.route('/signin').post(signIn)
    app.route('/validateToken').post(validateToken)
 }
+
+
+
+// const multer = require('multer')
+
+// const storage = multer.diskStorage({
+//     destination: function(req, file, callback){
+//         callback(null, './upload')
+//     },
+
+//     filename: function(req, file, callback){
+//         callback(null, `${Date.now()}_IMG`)
+//     }
+// })
+
+// const upload = multer({ storage }).single('arquivo')

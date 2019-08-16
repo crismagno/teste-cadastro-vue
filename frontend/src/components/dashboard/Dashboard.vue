@@ -5,8 +5,8 @@
 
         <div class="stats">
             <Stat title="Produtos" :value="totalProdutos" icon="fa fa-folder" color="#d54d50" />
-            <!-- <Stat title="Artigos" value="10" icon="fa fa-file" color="#3bc480" /> -->
-            <Stat title="Usuários" :value="totalUsers" icon="fa fa-users" color="#3282cd" />
+            <Stat title="Vendas" :value="totalVendas" icon="fa fa-industry" color="#3bc480" />
+            <Stat title="Anotações" :value="totalAnotacoes" icon="fa fa-edit" color="#3282cd" />
         </div>
     </div>
 </template>
@@ -24,22 +24,27 @@ export default {
     data: function(){
         return{
             totalProdutos: 0,
-            totalUsers: 0
+            totalAnotacoes: 0,
+            totalVendas: 0
         }
     },
 
     methods: {
         countProdutcs(){
-            axios.get(`http://localhost:3005/api/products/count`)
+            axios.get(`${baseApiURL}/api/products/count`)
                 .then(resp => this.totalProdutos = resp.data.value)
-            axios.get(`http://localhost:3005/api/users/count`)
-                .then(resp => this.totalUsers = resp.data.value)
+            axios.get(`${baseApiURL}/api/anotacao/count`)
+                .then(resp => this.totalAnotacoes = resp.data.value)
+            axios.get(`${baseApiURL}/api/status-venda/count`)
+                .then(resp => this.totalVendas = resp.data.value)
+
         }
     },
 
     created(){
         this.$store.commit('setUser', JSON.parse(localStorage.getItem(userKey)))
         this.countProdutcs()
+        this.$store.commit('menuSelected', 'dashboard')
         document.title = 'Dashboard'
     }
 }

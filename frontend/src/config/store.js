@@ -6,10 +6,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        user: null,
-        visible: true,
-        tab: '',
-        menuVisible: true
+        user: null, //dados do usuário
+        visible: true,  //visibilidade dos componentes quando estiver na tela de auth
+        tab: '',    //pra mudar a navegação das tabs do componente de ciclos de produto
+        menuVisible: true, //visibilidade do menu de navegação
+        produtoParaAtualizar: null, //guarda o produto para atualizar ou deletar
+        menuSelecionado: null,  //insere o menu selecionado
+        sinoAlerta: false, // sino que alerta quando tiver anotações do dia
     },
 
     mutations: {
@@ -33,7 +36,19 @@ export default new Vuex.Store({
 
         showMenu(state, menuVisible){
             state.menuVisible = menuVisible
-        }
+        
+        },
 
+        ProdutoUpdateDelete(state, produto){
+            state.produtoParaAtualizar = produto
+        },
+
+        menuSelected(state, menuSelecionado){
+            state.menuSelecionado = menuSelecionado
+        },
+
+        showSino(state, sino) {
+            state.sinoAlerta = sino
+        }
     }
 })
